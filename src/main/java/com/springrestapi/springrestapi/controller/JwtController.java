@@ -64,11 +64,20 @@ public class JwtController {
 
 		System.out.println("Inside Controller");
 		System.out.println(jwtRequest);
+		
+		Optional<Users> opUser = userRepository.findByUsername(jwtRequest.getUsername());
+		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+		
+		Users dbUser = opUser.get();
+		
+		System.out.println(bcrypt.matches(jwtRequest.getPassword(), dbUser.getPassword()));
+
+		System.out.println(dbUser.getPassword());
 		try {
 			
-
+            
 			this.authenticationManager.authenticate(
-					new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), "$2a$10$THdIjqRhPntUtErI4PYmkuy.JfRlwxt8PDD.GqXW2gzfk.Omh5Iuu"));
+					new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), dbUser.getPassword()));
 
 		} catch (Exception ex) {
 			LoginSuccessResponse loginsuccessResponse = new LoginSuccessResponse();
