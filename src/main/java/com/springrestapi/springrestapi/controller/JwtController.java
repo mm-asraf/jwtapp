@@ -14,6 +14,7 @@ package com.springrestapi.springrestapi.controller;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import java.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.springrestapi.springrestapi.dao.ResponseRepository;
@@ -64,20 +66,18 @@ public class JwtController {
 
 		System.out.println("Inside Controller");
 		System.out.println(jwtRequest);
+	
 		
-		Optional<Users> opUser = userRepository.findByUsername(jwtRequest.getUsername());
-		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 		
-		Users dbUser = opUser.get();
-		
-		System.out.println(bcrypt.matches(jwtRequest.getPassword(), dbUser.getPassword()));
-
-		System.out.println(dbUser.getPassword());
 		try {
 			
-            
+			Base64.Encoder encoder = Base64.getEncoder();
+			String encodedString  = encoder.encodeToString(jwtRequest.getPassword().getBytes());
+			System.out.println(encodedString);
+
+			          
 			this.authenticationManager.authenticate(
-					new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), dbUser.getPassword()));
+					new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), encodedString));
 
 		} catch (Exception ex) {
 			LoginSuccessResponse loginsuccessResponse = new LoginSuccessResponse();

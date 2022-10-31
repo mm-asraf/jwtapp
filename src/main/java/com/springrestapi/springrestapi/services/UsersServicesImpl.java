@@ -1,5 +1,7 @@
 package com.springrestapi.springrestapi.services;
 
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +9,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.springrestapi.springrestapi.dao.UsersDao;
@@ -52,6 +55,8 @@ public class UsersServicesImpl implements UserService {
 		Optional<Users> opUser = usersDao.findByUsername(user.getUsername());
 
 		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+//		Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
+		
 		if (opUser.isPresent()) {
 
 			Users dbUser = opUser.get();
@@ -66,7 +71,7 @@ public class UsersServicesImpl implements UserService {
 	}
 
 	@Override
-	public Users addUser(Users user) throws com.springrestapi.springrestapi.exception.UserNotFoundException {
+	public Users addUser(Users user) throws UserNotFoundException {
 
 		  Optional<Users> userName = usersDao.findByUsername(user.getUsername());
 		  Optional<Users> userEmail = usersDao.findByEmail(user.getEmail());
@@ -78,12 +83,33 @@ public class UsersServicesImpl implements UserService {
 			 
 		  }
 
-		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
-		String encryptedPw = bcrypt.encode(user.getPassword());
-		user.setPassword(encryptedPw);
-		Users saveUser = usersDao.save(user);
-		System.out.println(saveUser);
-		return saveUser;
+		 int strength = 15;
+		 
+//		 String pepper = "pepper"; // secret key used by password encoding
+//		 int iterations = 200000;  // number of hash iteration
+//		 int hashWidth = 256;      // hash width in bits
+//		 
+//		Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder(pepper, iterations, hashWidth);
+//		pbkdf2PasswordEncoder.setEncodeHashAsBase64(true);
+//		String encodedPassword = pbkdf2PasswordEncoder.encode(user.getPassword());
+		
+//		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder(strength,new SecureRandom());
+//		String encryptedPw = bcrypt.encode(user.getPassword());
+//		
+//		user.setPassword(encryptedPw);
+//		Users saveUser = usersDao.save(user);
+//		System.out.println(saveUser);
+//		return saveUser;
+		 
+		
+		 Base64.Encoder encoder =  Base64.getEncoder();
+		 String encodedString = encoder.encodeToString(user.getPassword().getBytes());
+		 user.setPassword(encodedString);
+		 
+		 Users saveUser = usersDao.save(user);
+		 System.out.println(saveUser);
+		 return saveUser;
+
 
 	}
 

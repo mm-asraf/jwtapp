@@ -54,8 +54,10 @@ public class Users {
 	private String username;
 	
 	@NotNull
-//	@Pattern(regexp="[a-zA-Z0-9]{6,12}",message="Password must contain between 6 to 12 characters. Must be alphanumeric with both Upper and lowercase characters.")
+	@Size(min=6,message="password must contain atlest 6 charecters")
 	private String password;
+//	@Pattern(regexp="[a-zA-Z0-9]{6,12}",message="Password must contain between 6 to 12 characters. Must be alphanumeric with both Upper and lowercase characters.")
+	
 
 	public Users() {
 		super();
@@ -68,7 +70,7 @@ public class Users {
 			@NotNull @Size(min = 6, message = "min character should be 3") @Pattern(regexp = "^[A-Za-z0-9+_.-]+@(.+)$", message = "email should not contain special character but valid email style will be fine") String email,
 			@NotNull @Pattern(regexp = "[0-9]{10}", message = "Mobile number must have 10 digits") String mobile,
 			@NotNull @Pattern(regexp = "^[a-zA-Z0-9]{6,12}$", message = "username must be of 6 to 12 length with no special characters") String username,
-			@NotNull String password) {
+			@NotNull @Size(min=6,max=15,message="password must contain atlest 6 charecters") String password) {
 		super();
 		this.id = id;
 		this.firstname = firstname;
